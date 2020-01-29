@@ -1,0 +1,69 @@
+---
+version: "3"
+
+services:
+  pulp-galaxy:
+    image: "localhost/pulp-galaxy-dev/pulp-galaxy:latest"
+    build:
+      context: ".."
+      dockerfile: "dev/pulp_galaxy/Dockerfile"
+    command: ['run', 'pulp-galaxy']
+    environment:
+      - 'PULP_DB_HOST=postgres'
+      - 'PULP_REDIS_HOST=redis'
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+      - redis
+
+  pulp-resource-manager:
+    image: "localhost/pulp-galaxy-dev/pulp-galaxy:latest"
+    command: ['run', 'pulp-resource-manager']
+    environment:
+      - 'PULP_DB_HOST=postgres'
+      - 'PULP_REDIS_HOST=redis'
+    depends_on:
+      - postgres
+      - redis
+
+  pulp-worker:
+    image: "localhost/pulp-galaxy-dev/pulp-galaxy:latest"
+    command: ['run', 'pulp-worker']
+    environment:
+      - 'PULP_DB_HOST=postgres'
+      - 'PULP_REDIS_HOST=redis'
+    depends_on:
+      - postgres
+      - redis
+
+  pulp-content-app:
+    image: "localhost/pulp-galaxy-dev/pulp-galaxy:latest"
+    command: ['run', 'pulp-content-app']
+    environment:
+      - 'PULP_DB_HOST=postgres'
+      - 'PULP_REDIS_HOST=redis'
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: "postgres:11"
+    ports:
+      - "5432:5432"
+    environment:
+      - 'POSTGRES_USER=pulp'
+      - 'POSTGRES_PASSWORD=secret'
+    volumes:
+      - "pg_data:/var/lib/postgresql/data"
+
+  redis:
+    image: "redis:5"
+    volumes:
+      - "redis_data:/data"
+
+
+volumes:
+  pg_data: {}
+  pulp_data: {}
+  redis_data: {}

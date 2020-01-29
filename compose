@@ -1,0 +1,15 @@
+#!/bin/bash
+
+set -o nounset
+set -o errexit
+
+
+ENV="${ENV:-dev}"
+PROJECT_NAME="pulp-galaxy-${ENV}"
+
+
+_docker_compose_file="${ENV}/docker-compose.yml"
+exec docker-compose \
+    -p "${PROJECT_NAME}" \
+    -f "${_docker_compose_file}" \
+    "$@"

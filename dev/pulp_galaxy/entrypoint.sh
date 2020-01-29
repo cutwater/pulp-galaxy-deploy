@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# NOTE: This line should be before setting bash modes, because
+# `scl_source` is not compatible with `set -o nounset`.
 ENABLED_COLLECTIONS="${ENABLED_COLLECTIONS:-}"
 if [[ ! -z "${ENABLED_COLLECTIONS}" ]]; then
   source scl_source enable ${ENABLED_COLLECTIONS}
@@ -10,7 +12,7 @@ set -o errexit
 set -o pipefail
 
 
-wait_for_tcp_port() {
+_wait_tcp_port() {
   local -r host="$1"
   local -r port="$2"
 
@@ -33,21 +35,20 @@ wait_for_tcp_port() {
 }
 
 run_pulp_galaxy() {
-  django-admin runserver "0.0.0.0:8000"
+  exec django-admin runserver "0.0.0.0:8000"
 }
 
 run_pulp_resource_manager() {
   exec rq worker \
       -w 'pulpcore.tasking.worker.PulpWorker' \
-      -n 'resource-manager@automation-hub' \
+      -n 'resource-manager' \
       -c 'pulpcore.rqconfig' \
-      --pid='/var/run/pulp/resource_manager.pid'
+      --pid='/var/run/pulp/resource-manager.pid'
 }
 
 run_pulp_worker() {
   exec rq worker \
       -w 'pulpcore.tasking.worker.PulpWorker' \
-      -n "reserved-resource-worker@automation-hub" \
       -c 'pulpcore.rqconfig' \
       --pid="/var/run/pulp/worker.pid"
 }
@@ -57,30 +58,36 @@ run_pulp_content_app() {
 }
 
 run_service() {
+  local cmd
   case "$1" in
     'pulp-galaxy')
-      run_pulp_galaxy
+      cmd='run_pulp_galaxy'
       ;;
     'pulp-resource-manager')
-      run_pulp_resource_manager
+      cmd='run_pulp_resource_manager'
       ;;
     'pulp-worker')
-      run_pulp_worker
+      cmd='run_pulp_worker'
       ;;
     'pulp-content-app')
-      run_pulp_content_app
+      cmd='run_pulp_content_app'
       ;;
     *)
       echo "ERROR: Unexpected argument '$1'." >&2
       return 1
       ;;
     esac
+
+  _wait_tcp_port "${PULP_DB_HOST:-localhost}" "${PULP_DB_PORT:-5432}"
+
+  django-admin migrate
+
+  ${cmd}
 }
 
 run_manage() {
   exec django-admin "$@"
 }
-
 
 main() {
   if [[ "$#" -eq 0 ]]; then
