@@ -14,3 +14,5 @@ DATABASES = {
         'PASSWORD': 'secret',
     }
 }
+
+AUTH_USER_MODEL = 'galaxy.user'

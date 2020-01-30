@@ -79,13 +79,13 @@ run_service() {
     esac
 
   _wait_tcp_port "${PULP_DB_HOST:-localhost}" "${PULP_DB_PORT:-5432}"
-
+  pip install -e "/app"
   django-admin migrate
-
   ${cmd}
 }
 
 run_manage() {
+  pip install -e "/app"
   exec django-admin "$@"
 }
 

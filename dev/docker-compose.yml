@@ -13,6 +13,9 @@ services:
       - 'PULP_REDIS_HOST=redis'
     ports:
       - "8000:8000"
+    volumes:
+      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
+      - "../src/pulp_galaxy:/app"
     depends_on:
       - postgres
       - redis
