@@ -24,7 +24,8 @@ COPY dev/pulp_galaxy/settings.py /etc/pulp/settings.py
 COPY dev/pulp_galaxy/entrypoint.sh /entrypoint
 
 RUN source scl_source enable ${ENABLED_COLLECTIONS} \
-    && pip install -e /app \
+    && pip install --no-cache-dir -U pip \
+    && pip install --no-cache-dir -e /app \
     && PULP_CONTENT_ORIGIN=x django-admin collectstatic
 
 RUN chmod 755 /entrypoint

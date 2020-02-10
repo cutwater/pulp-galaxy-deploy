@@ -35,22 +35,23 @@ _wait_tcp_port() {
 }
 
 run_pulp_galaxy() {
-  exec django-admin runserver "0.0.0.0:8000"
+  exec gunicorn \
+    --bind '0.0.0.0:8000' \
+    --threads 4 \
+    'pulpcore.app.wsgi:application'
 }
 
 run_pulp_resource_manager() {
   exec rq worker \
-      -w 'pulpcore.tasking.worker.PulpWorker' \
-      -n 'resource-manager' \
-      -c 'pulpcore.rqconfig' \
-      --pid='/var/run/pulp/resource-manager.pid'
+    -n 'resource-manager' \
+    -w 'pulpcore.tasking.worker.PulpWorker' \
+    -c 'pulpcore.rqconfig'
 }
 
 run_pulp_worker() {
   exec rq worker \
-      -w 'pulpcore.tasking.worker.PulpWorker' \
-      -c 'pulpcore.rqconfig' \
-      --pid="/var/run/pulp/worker.pid"
+    -w 'pulpcore.tasking.worker.PulpWorker' \
+    -c 'pulpcore.rqconfig'
 }
 
 run_pulp_content_app() {
@@ -79,13 +80,13 @@ run_service() {
     esac
 
   _wait_tcp_port "${PULP_DB_HOST:-localhost}" "${PULP_DB_PORT:-5432}"
-  pip install -e "/app"
+  pip install -e "/app" >/dev/null
   django-admin migrate
   ${cmd}
 }
 
 run_manage() {
-  pip install -e "/app"
+  pip install -e "/app" >/dev/null
   exec django-admin "$@"
 }
 
