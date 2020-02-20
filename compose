@@ -4,12 +4,11 @@ set -o nounset
 set -o errexit
 
 
-ENV="${ENV:-dev}"
-PROJECT_NAME="pulp-galaxy-${ENV}"
+declare -r ENV="${ENV:-dev}"
 
+declare -xr COMPOSE_PROJECT_NAME="pulp-galaxy-${ENV}"
+declare -xr COMPOSE_FILE="${ENV}/docker-compose.yml"
 
-_docker_compose_file="${ENV}/docker-compose.yml"
-exec docker-compose \
-    -p "${PROJECT_NAME}" \
-    -f "${_docker_compose_file}" \
-    "$@"
+declare -xr CONTEXT_DIR='..'
+
+exec docker-compose "$@"
