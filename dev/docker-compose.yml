@@ -3,14 +3,13 @@ version: "3.7"
 
 services:
   pulp-galaxy:
-    image: "localhost/pulp-galaxy/pulp-galaxy-dev:latest"
+    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
     build:
       context: "${CONTEXT_DIR}"
       dockerfile: "dev/pulp_galaxy/Dockerfile"
     command: ['run', 'pulp-galaxy']
     environment:
-      - 'PULP_DB_HOST=postgres'
-      - 'PULP_REDIS_HOST=redis'
+      - '${CONTEXT_DIR}/dev/env/pulp'
     ports:
       - "8000:8000"
     volumes:
@@ -21,31 +20,28 @@ services:
       - redis
 
   pulp-resource-manager:
-    image: "localhost/pulp-galaxy/pulp-galaxy-dev:latest"
+    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
     command: ['run', 'pulp-resource-manager']
     environment:
-      - 'PULP_DB_HOST=postgres'
-      - 'PULP_REDIS_HOST=redis'
+      - '${CONTEXT_DIR}/dev/env/pulp'
     depends_on:
       - postgres
       - redis
 
   pulp-worker:
-    image: "localhost/pulp-galaxy/pulp-galaxy-dev:latest"
+    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
     command: ['run', 'pulp-worker']
     environment:
-      - 'PULP_DB_HOST=postgres'
-      - 'PULP_REDIS_HOST=redis'
+      - '${CONTEXT_DIR}/dev/env/pulp'
     depends_on:
       - postgres
       - redis
 
   pulp-content-app:
-    image: "localhost/pulp-galaxy/pulp-galaxy-dev:latest"
+    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
     command: ['run', 'pulp-content-app']
     environment:
-      - 'PULP_DB_HOST=postgres'
-      - 'PULP_REDIS_HOST=redis'
+      - '${CONTEXT_DIR}/dev/env/pulp'
     depends_on:
       - postgres
       - redis

@@ -1,0 +1,6 @@
+PULP_DB_HOST=postgres
+PULP_DB_USER=pulp_galaxy
+PULP_DB_PASSWORD=pulp_galaxy
+PULP_DB_NAME=pulp_galaxy
+
+PULP_REDIS_HOST=redis
