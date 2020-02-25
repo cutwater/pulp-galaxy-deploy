@@ -1,12 +1,5 @@
 #!/bin/bash
 
-# NOTE: This line should be before setting bash modes, because
-# `scl_source` is not compatible with `set -o nounset`.
-ENABLED_COLLECTIONS="${ENABLED_COLLECTIONS:-}"
-if [[ ! -z "${ENABLED_COLLECTIONS}" ]]; then
-  source scl_source enable ${ENABLED_COLLECTIONS}
-fi
-
 set -o nounset
 set -o errexit
 set -o pipefail
@@ -81,13 +74,13 @@ run_service() {
     esac
 
   _wait_tcp_port "${PULP_DB_HOST:-localhost}" "${PULP_DB_PORT:-5432}"
-  pip install -e "/app" >/dev/null
+  pip3 install -e "/app" >/dev/null
   django-admin migrate
   ${cmd}
 }
 
 run_manage() {
-  pip install -e "/app" >/dev/null
+  pip3 install -e "/app" >/dev/null
   exec django-admin "$@"
 }
 
