@@ -1,0 +1,6 @@
+# Git
+**/.git
+# Python
+**/__pycache__
+**/.venv
+**/*.egg-info
