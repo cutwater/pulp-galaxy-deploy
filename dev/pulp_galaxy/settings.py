@@ -16,3 +16,5 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = 'galaxy.user'
+
+DEBUG = True
