@@ -8,7 +8,7 @@ services:
       context: "${CONTEXT_DIR}"
       dockerfile: "dev/pulp_galaxy/Dockerfile"
     command: ['run', 'pulp-galaxy']
-    environment:
+    env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
     ports:
       - "8000:8000"
@@ -22,7 +22,7 @@ services:
   pulp-resource-manager:
     image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
     command: ['run', 'pulp-resource-manager']
-    environment:
+    env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
     depends_on:
       - postgres
@@ -31,7 +31,7 @@ services:
   pulp-worker:
     image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
     command: ['run', 'pulp-worker']
-    environment:
+    env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
     depends_on:
       - postgres
@@ -40,7 +40,7 @@ services:
   pulp-content-app:
     image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
     command: ['run', 'pulp-content-app']
-    environment:
+    env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
     depends_on:
       - postgres
