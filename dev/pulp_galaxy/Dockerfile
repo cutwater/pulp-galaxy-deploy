@@ -1,3 +1,15 @@
+# Stage: Pulp bindings
+# ---------------------------------------------------------
+FROM openapitools/openapi-generator-cli AS bindings
+
+COPY src/pulp_galaxy/bindings/openapi.yaml /local/openapi.yaml
+RUN docker-entrypoint.sh generate \
+    -i /local/openapi.yaml \
+    -g python \
+    -o /local/galaxy-pulp \
+    --skip-validate-spec \
+    --additional-properties=packageName=galaxy_pulp,projectName=galaxy-pulp
+
 # Stage: Base image
 # ---------------------------------------------------------
 FROM centos:8 AS base
@@ -27,12 +39,15 @@ RUN dnf -y install \
 
 COPY src/pulp_galaxy /app
 COPY dev/pulp_galaxy/settings.py /etc/pulp/settings.py
-COPY dev/pulp_galaxy/entrypoint.sh /entrypoint
+COPY --from=bindings /local/galaxy-pulp /tmp/galaxy-pulp
 
 RUN pip3 install --no-cache-dir -U pip \
+    && pip3 install --no-cache-dir /tmp/galaxy-pulp \
     && pip3 install --no-cache-dir -e /app \
-    && PULP_CONTENT_ORIGIN=x django-admin collectstatic
+    && PULP_CONTENT_ORIGIN=x django-admin collectstatic \
+    && rm -rf /tmp/galaxy-pulp
 
+COPY dev/pulp_galaxy/entrypoint.sh /entrypoint
 RUN chmod 755 /entrypoint
 
 ENTRYPOINT [ "/entrypoint" ]
