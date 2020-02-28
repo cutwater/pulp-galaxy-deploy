@@ -37,9 +37,9 @@ services:
       - postgres
       - redis
 
-  pulp-content-app:
+  pulp-content:
     image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
-    command: ['run', 'pulp-content-app']
+    command: ['run', 'pulp-content']
     env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
     depends_on:

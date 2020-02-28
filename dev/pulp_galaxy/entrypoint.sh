@@ -30,7 +30,7 @@ _wait_tcp_port() {
 run_pulp_galaxy() {
   exec gunicorn \
     --bind '0.0.0.0:8000' \
-    --threads 4 \
+    --workers 4 \
     --reload \
     'pulpcore.app.wsgi:application'
 }
@@ -48,8 +48,13 @@ run_pulp_worker() {
     -c 'pulpcore.rqconfig'
 }
 
-run_pulp_content_app() {
-  exec pulp-content
+run_pulp_content() {
+  exec gunicorn \
+    --bind '0.0.0.0:24816' \
+    --worker-class 'aiohttp.GunicornWebWorker' \
+    --workers 2 \
+    --access-logfile - \
+    'pulpcore.content:server'
 }
 
 run_service() {
@@ -64,8 +69,8 @@ run_service() {
     'pulp-worker')
       cmd='run_pulp_worker'
       ;;
-    'pulp-content-app')
-      cmd='run_pulp_content_app'
+    'pulp-content')
+      cmd='run_pulp_content'
       ;;
     *)
       echo "ERROR: Unexpected argument '$1'." >&2
