@@ -39,15 +39,25 @@ RUN dnf -y install \
 
 COPY src/pulp_galaxy /app
 COPY dev/pulp_galaxy/settings.py /etc/pulp/settings.py
+COPY dev/pulp_galaxy/entrypoint.sh /entrypoint
 COPY --from=bindings /local/galaxy-pulp /tmp/galaxy-pulp
 
-RUN pip3 install --no-cache-dir -U pip \
-    && pip3 install --no-cache-dir /tmp/galaxy-pulp \
-    && pip3 install --no-cache-dir -e /app \
-    && PULP_CONTENT_ORIGIN=x django-admin collectstatic \
-    && rm -rf /tmp/galaxy-pulp
+RUN mkdir -p /var/run/pulp \
+        /var/lib/pulp/tmp \
+    && chmod 755 /entrypoint
 
-COPY dev/pulp_galaxy/entrypoint.sh /entrypoint
-RUN chmod 755 /entrypoint
+RUN python3 -m venv /venv \
+    && source /venv/bin/activate \
+    && pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir /tmp/galaxy-pulp \
+    && rm -rf /tmp/galaxy-pulp \
+    && pip install --no-cache-dir -e /app \
+    && PULP_CONTENT_ORIGIN=x django-admin collectstatic \
+    && chmod 0755 /entrypoint
+
+
+ENV PATH="/venv/bin:${PATH}"
+
+VOLUME [ "/var/lib/pulp/artifact", "/var/lib/pulp/tmp" ]
 
 ENTRYPOINT [ "/entrypoint" ]
