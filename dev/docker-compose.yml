@@ -15,6 +15,7 @@ services:
     volumes:
       - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
       - "../src/pulp_galaxy:/app"
+      - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres
       - redis
@@ -24,6 +25,10 @@ services:
     command: ['run', 'pulp-resource-manager']
     env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
+    volumes:
+      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
+      - "../src/pulp_galaxy:/app"
+      - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres
       - redis
@@ -33,6 +38,10 @@ services:
     command: ['run', 'pulp-worker']
     env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
+    volumes:
+      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
+      - "../src/pulp_galaxy:/app"
+      - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres
       - redis
@@ -42,6 +51,10 @@ services:
     command: ['run', 'pulp-content']
     env_file:
       - '${CONTEXT_DIR}/dev/env/pulp'
+    volumes:
+      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
+      - "../src/pulp_galaxy:/app"
+      - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres
       - redis
@@ -63,6 +76,6 @@ services:
 
 
 volumes:
+  pulp_artifact: {}
   pg_data: {}
-  pulp_data: {}
   redis_data: {}
