@@ -2,7 +2,8 @@ import os
 
 # DEBUG = True
 
-CONTENT_ORIGIN = "http://loclahost:8000"
+CONTENT_ORIGIN = "http://localhost:8000"
+CONTENT_PATH_PREFIX = "/api/galaxy/v3/artifacts/collections/"
 
 DATABASES = {
     'default': {
