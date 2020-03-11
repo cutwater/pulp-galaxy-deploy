@@ -6,7 +6,7 @@ set -o errexit
 
 declare -r ENV="${ENV:-dev}"
 
-declare -xr COMPOSE_PROJECT_NAME="pulp-galaxy-${ENV}"
+declare -xr COMPOSE_PROJECT_NAME="galaxy_ng-${ENV}"
 declare -xr COMPOSE_FILE="${ENV}/docker-compose.yml"
 
 declare -xr CONTEXT_DIR='..'

@@ -2,58 +2,57 @@
 version: "3.7"
 
 services:
-  pulp-galaxy:
-    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
+  api:
+    image: "localhost/${COMPOSE_PROJECT_NAME}/galaxy_ng:latest"
     build:
-      context: "${CONTEXT_DIR}"
-      dockerfile: "dev/pulp_galaxy/Dockerfile"
-    command: ['run', 'pulp-galaxy']
+      context: "../src/galaxy_ng"
+    command: ['run', 'api']
     env_file:
-      - '${CONTEXT_DIR}/dev/env/pulp'
+      - './env/galaxy_ng'
     ports:
       - "8000:8000"
     volumes:
-      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
-      - "../src/pulp_galaxy:/app"
+      - "./galaxy_ng/settings.py:/etc/pulp/settings.py"
+      - "../src/galaxy_ng:/app"
       - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres
       - redis
 
-  pulp-resource-manager:
-    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
-    command: ['run', 'pulp-resource-manager']
+  resource-manager:
+    image: "localhost/${COMPOSE_PROJECT_NAME}/galaxy_ng:latest"
+    command: ['run', 'resource-manager']
     env_file:
-      - '${CONTEXT_DIR}/dev/env/pulp'
+      - './env/galaxy_ng'
     volumes:
-      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
-      - "../src/pulp_galaxy:/app"
+      - "./galaxy_ng/settings.py:/etc/pulp/settings.py"
+      - "../src/galaxy_ng:/app"
       - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres
       - redis
 
-  pulp-worker:
-    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
-    command: ['run', 'pulp-worker']
+  worker:
+    image: "localhost/${COMPOSE_PROJECT_NAME}/galaxy_ng:latest"
+    command: ['run', 'worker']
     env_file:
-      - '${CONTEXT_DIR}/dev/env/pulp'
+      - './env/galaxy_ng'
     volumes:
-      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
-      - "../src/pulp_galaxy:/app"
+      - "./galaxy_ng/settings.py:/etc/pulp/settings.py"
+      - "../src/galaxy_ng:/app"
       - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres
       - redis
 
-  pulp-content:
-    image: "localhost/${COMPOSE_PROJECT_NAME}/pulp-galaxy:latest"
-    command: ['run', 'pulp-content']
+  content-app:
+    image: "localhost/${COMPOSE_PROJECT_NAME}/galaxy_ng:latest"
+    command: ['run', 'content-app']
     env_file:
-      - '${CONTEXT_DIR}/dev/env/pulp'
+      - './env/galaxy_ng'
     volumes:
-      - "../dev/pulp_galaxy/settings.py:/etc/pulp/settings.py"
-      - "../src/pulp_galaxy:/app"
+      - "./galaxy_ng/settings.py:/etc/pulp/settings.py"
+      - "../src/galaxy_ng:/app"
       - "pulp_artifact:/var/lib/pulp/artifact"
     depends_on:
       - postgres

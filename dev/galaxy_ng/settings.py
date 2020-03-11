@@ -1,7 +1,5 @@
 import os
 
-# DEBUG = True
-
 CONTENT_ORIGIN = "http://localhost:8000"
 CONTENT_PATH_PREFIX = "/api/galaxy/v3/artifacts/collections/"
 
@@ -15,7 +13,5 @@ DATABASES = {
         'PASSWORD': os.environ.get('PULP_DB_PASSWORD', ''),
     }
 }
-
-AUTH_USER_MODEL = 'galaxy.user'
 
 DEBUG = True
